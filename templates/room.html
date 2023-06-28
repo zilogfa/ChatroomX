@@ -1,0 +1,57 @@
+{% extends 'base.html' %} {% block content %}
+<div class="message-box">
+    
+    <a href="{{url_for('home')}}" style="margin-left: 5px; margin-top: 5px; text-decoration:none;">  <button class="btn btn-outline-light">🢨</button></a>
+  <h2 style="font-weight: 500; margin-bottom: 1%; color:#D8D8D8; font-size: medium; "> <span style="font-size: larger; color: rgb(255, 184, 91);">ChatroomX</span> Room Name: <span style="font-weight: 700; color:#D8D8D8;">{{code}}</span></h2>
+  <div class="messages" id="messages"></div>
+  <div class="inputs" style="gap:10px;">
+    <input
+      type="text"
+      rows="3"
+      placeholder="Message"
+      name="message"
+      id="message"
+      class="form-control"
+    />
+    <button type="button" name="send" id="send-btn" onClick="sendMessage()" class="btn btn-primary btn-sm">
+      Send
+    </button>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  var socketio = io();
+  const messages = document.getElementById("messages");
+
+  const createMessage = (name, msg) => {
+    const content = `
+    <div class="text">
+        <span>
+            <strong>· ${name}</strong>:  ${msg}
+        </span>
+        <span class="muted"> 
+
+            ${new Date().toLocaleString()}
+        </span>
+    </div>
+    `;
+    messages.innerHTML += content;
+  };
+
+  socketio.on("message", (data) => {
+    createMessage(data.name, data.message);
+  });
+
+  const sendMessage = () => {
+    const message = document.getElementById("message");
+    if (message.value == "") return;
+    socketio.emit("message", { data: message.value });
+    message.value = "";
+  };
+</script>
+{% for msg in messages %}
+<script type="text/javascript">
+  createMessage("{{msg.name}}", "{{msg.message}}");
+</script>
+{% endfor %} {% endblock %}
