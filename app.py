@@ -1,15 +1,27 @@
+"""
+ChatroomX; Private Chatroom! 
+Dev: Ali Jafarbeglou - 2023
+
+Language: Python, JavaScript, HTML, CSS/Bootstrap
+Technologies: Flask, Flask SocketIO
+"""
+
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_socketio import join_room, leave_room, send, SocketIO
 import random
 from string import ascii_uppercase
 
+
+# Configuring Flask and SocketIO
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secret!"
 socketio = SocketIO(app)
 
+# Storing Data
 rooms = {}
 
 def generate_unique_code(length):
+    """generating random room name"""
     while True:
         code = ""
         for _ in range(length):
@@ -20,6 +32,10 @@ def generate_unique_code(length):
     
     return code
 
+
+
+
+# Home Page
 @app.route("/", methods=["POST", "GET"])
 def home():
     session.clear()
@@ -48,6 +64,11 @@ def home():
 
     return render_template("home.html", isHome=True)
 
+
+
+
+
+# ROOM page
 @app.route("/room")
 def room():
     room = session.get("room")
@@ -56,6 +77,9 @@ def room():
 
     return render_template("room.html", code=room, messages=rooms[room]["messages"])
 
+
+
+#loading Message for new joined
 @socketio.on("message")
 def message(data):
     room = session.get("room")
@@ -70,6 +94,8 @@ def message(data):
     rooms[room]["messages"].append(content)
     print(f"{session.get('name')} said: {data['data']}")
 
+
+# Joining/Connecting socketIO
 @socketio.on("connect")
 def connect(auth):
     room = session.get("room")
@@ -85,6 +111,8 @@ def connect(auth):
     rooms[room]["members"] += 1
     print(f"{name} joined room {room}")
 
+
+# Disconneting SocketIO
 @socketio.on("disconnect")
 def disconnect():
     room = session.get("room")
