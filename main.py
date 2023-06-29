@@ -10,7 +10,7 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from flask_socketio import join_room, leave_room, send, SocketIO
 import random
 from string import ascii_uppercase
-import os
+
 
 
 # Configuring Flask and SocketIO
@@ -129,4 +129,4 @@ def disconnect():
     print(f"{name} has left the room {room}")
 
 if __name__ == "__main__":
-    socketio.run(app, port=int(os.environ.get('PORT', 5000)))
+    socketio.run(app, debug=True)
