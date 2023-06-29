@@ -1,1 +1,1 @@
-web: gunicorn -k geventwebsocket.gunicorn.GeventWebSocker -w 1 main:app
+web: gunicorn main:app
