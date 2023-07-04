@@ -12,6 +12,7 @@ import random
 from string import ascii_uppercase
 
 
+
 # Configuring Flask and SocketIO
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secret!"
